@@ -104,5 +104,25 @@ for i in 1:n_points+1
 	end
 end
 
-plot(x, y, z_posterior, title="Dirichlet Distribution PDF", xlabel="x", ylabel="y",  st = :surface, color=:rainbow)
-savefig("posterior_dist.png")
+#plot(x, y, z_posterior, title="Dirichlet Distribution PDF", xlabel="x", ylabel="y",  st = :surface, color=:rainbow)
+#savefig("posterior_dist.png")
+
+##########################
+##########################
+##########################
+
+
+##########################
+##### 予測分布の生成 #####
+##########################
+# 予測分布のパラメータ
+pi_star = mean(posterior_dist)
+
+# 予測分布のインスタンスを生成
+predict_dist =  Categorical(pi_star)
+
+# 確率質量関数（PMF）の生成
+pmf_predict = [pdf(predict_dist, i) for i in 1:K]
+for i in 1:K
+	println("カテゴリ $i の確率: ", pmf_predict[i])
+end
