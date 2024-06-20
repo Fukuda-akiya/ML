@@ -81,7 +81,7 @@ N_failures  = counts[0]
 
 # 事後分布のパラメータ
 a_post = a + N_successes
-b_post = a + N_failures
+b_post = b + N_failures
 
 # 事後ベータ分布のインスタンスの生成
 posterior_dist = Beta(a_post, b_post)
