@@ -33,7 +33,7 @@ end
 ##### 学習データの生成 #####
 ############################
 # サンプル数
-N = 50
+N = 5000
 
 # カテゴリ分布に従うデータの生成
 data_samples = rand(categorical_dist_true, N)
@@ -126,3 +126,11 @@ pmf_predict = [pdf(predict_dist, i) for i in 1:K]
 for i in 1:K
 	println("カテゴリ $i の確率: ", pmf_predict[i])
 end
+
+k_values = 1:1:3
+bar(k_values, pmf_predict, label="predict", alpha=0.5)
+hline!([pmf_true[1]], label="1", color=:red, linestyle = :dash)
+hline!([pmf_true[2]], label="2", color=:orange, linestyle = :dash)
+hline!([pmf_true[3]], label="3", color=:yellow, linestyle = :dash)
+plot!(legend=:topright)
+savefig("compare_ture_predict_N5000.png")
