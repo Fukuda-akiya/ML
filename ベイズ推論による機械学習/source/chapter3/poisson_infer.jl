@@ -16,7 +16,7 @@ poisson_dist_true = Poisson(lambda_true)
 
 # 確率質量関数の計算
 x_values = 0:1:16
-pmf_true = pdf(poisson_dist_true, x_values)
+pmf_true = pdf.(poisson_dist_true, x_values)
 
 # モデル構造の確認
 #bar(x_values, pmf_true)
@@ -40,6 +40,7 @@ poisson_dist_data = Poisson(lambda_true)
 data_samples = rand(poisson_dist_data, N)
 counts = countmap(data_samples)
 pmf_data = [get(counts, x, 0)/N for x in x_values]
+println(counts)
 
 # 生成したデータの確認
 #bar(counts)
@@ -64,7 +65,7 @@ prior_dist = Gamma(a,b)
 
 # 確率密度関数の計算
 lambda_values = 0:0.001:8
-pdf_prior = pdf(prior_dist, lambda_values)
+pdf_prior = pdf.(prior_dist, lambda_values)
 #plot(lambda_values, pdf_prior)
 #savefig("prior_dist.png")
 
@@ -87,7 +88,8 @@ println(b_hat)
 posterior_dist = Gamma(a_hat,b_hat)
 
 # 確率密度関数
-pdf_posterior = pdf(posterior_dist, lambda_values)
-plot(lambda_values, pdf_posterior)
+pdf_posterior = pdf.(posterior_dist, lambda_values)
+plot(lambda_values, pdf_posterior, label="Posterior")
+plot!(lambda_values, pdf_prior, label="Prior")
 vline!([lambda_true], color=:red, linestyle=:dash)
 savefig("posterior_dist.png")
