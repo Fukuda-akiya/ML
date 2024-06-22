@@ -3,7 +3,7 @@ using Plots
 using Random
 using StatsBase
 
-Random.seed!(111)
+Random.seed!(123)
 
 ########################
 ##### モデルの生成 #####
@@ -39,13 +39,11 @@ poisson_dist_data = Poisson(lambda_true)
 # ポワソン分布に従うデータを乱数で生成
 data_samples = rand(poisson_dist_data, N)
 counts = countmap(data_samples)
-pmf_data = [get(counts, x, 0)/N for x in x_values]
-println(counts)
+#println(counts)
 
 # 生成したデータの確認
-#bar(counts)
-#bar(x_values, pmf_data)
-#savefig("poisson_data.png")
+bar(counts)
+savefig("poisson_data.png")
 
 ############################
 ############################
@@ -61,10 +59,10 @@ a = 1
 b = 1
 
 # 事前ガンマ分布のインスタンスを生成
-prior_dist = Gamma(a,b)
+prior_dist = Gamma(a,1/b)
 
 # 確率密度関数の計算
-lambda_values = 0:0.001:8
+lambda_values = 0.0:0.001:8.0
 pdf_prior = pdf.(prior_dist, lambda_values)
 #plot(lambda_values, pdf_prior)
 #savefig("prior_dist.png")
@@ -81,15 +79,37 @@ pdf_prior = pdf.(prior_dist, lambda_values)
 a_hat = a + sum(data_samples)
 b_hat = b + N
 
+println(sum(data_samples))
 println(a_hat)
 println(b_hat)
 
 # 事後ガンマ分布のインスタンスを生成
-posterior_dist = Gamma(a_hat,b_hat)
+posterior_dist = Gamma(205, 1/b_hat)
 
 # 確率密度関数
 pdf_posterior = pdf.(posterior_dist, lambda_values)
 plot(lambda_values, pdf_posterior, label="Posterior")
 plot!(lambda_values, pdf_prior, label="Prior")
-vline!([lambda_true], color=:red, linestyle=:dash)
+vline!([lambda_true], color=:red, linestyle=:dash, label="lambda true")
 savefig("posterior_dist.png")
+
+##########################
+##########################
+##########################
+
+
+####################
+##### 予測分布 #####
+####################
+# パラメータ
+r = a_hat
+p = 1 / (1 + 1/b_hat)
+
+# 負の二項分布のインスタンス
+predict_dist = NegativeBinomial(r, p)
+
+# 確率質量関数の計算
+pmf_predict = pdf.(predict_dist, x_values)
+bar(x_values, pmf_predict, alpha=0.5, label="Predict")
+bar!(x_values, pmf_true, alpha=0.5, label="True")
+savefig("predict_dist.png")
