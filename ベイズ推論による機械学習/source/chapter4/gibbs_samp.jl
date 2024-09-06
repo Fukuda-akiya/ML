@@ -209,7 +209,7 @@ for i in 1:iterator
 
 	# b_hat_kの更新にはクラスタ番号を用いる
 	global b_hat_k = zeros(K)
-	sum_one_hot_s_nk = sum(one_hot_s_nk, dims=1)
+	sum_one_hot_s_nk = sum(one_hot_s_nk, dims=1)[:]
 	b_hat_k = sum_one_hot_s_nk .+ b
 	save_b_hat_k[i,:] = b_hat_k
 
@@ -223,7 +223,7 @@ for i in 1:iterator
 	######################
 	# パラメータ更新
 	global alpha_hat_k = zeros(K)
-	alpha_hat_k = sum(sum_one_hot_s_nk, dims=1)[:] .+ alpha_prior_k
+	alpha_hat_k = sum_one_hot_s_nk .+ alpha_prior_k
 	
 	# piのサンプル
 	global pi_samp_k = zeros(K)
